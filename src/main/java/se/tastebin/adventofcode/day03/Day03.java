@@ -37,7 +37,6 @@ public class Day03 {
                 if (ch == '#') {
                     counter++;
                 }
-                //System.out.println(String.format("%d, %d = %c", currentX, currentY, ch));
             }
             return counter;
     }

@@ -26,8 +26,6 @@ public class Day04 {
         }
         passport.add(new Passport(result.toString()));
         
-        //passport.forEach(System.out::println);
-        
         long count = passport.stream().filter(p->p.isValid()).count();
         System.out.println(String.format("Number of valid passports: %d", count));
     }
