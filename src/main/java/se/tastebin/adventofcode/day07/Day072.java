@@ -100,16 +100,16 @@ public class Day072 {
 
         }
         
-        public String name() {
-            return name;
-        }
-        
         public List<Bag> content() {
             return content;
         }
 
+        public boolean isBag(String name) {
+            return this.name.equals(name);
+        }
+        
         public boolean hasBag(String search) {
-            return content.stream().anyMatch(b -> (b.name().equals(search) || b.hasBag(search)));
+            return content.stream().anyMatch(b -> (b.isBag(search) || b.hasBag(search)));
         }
         
         @Override
