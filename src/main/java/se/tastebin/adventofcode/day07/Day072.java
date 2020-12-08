@@ -21,20 +21,24 @@ public class Day072 {
         List<Bag> result = new ArrayList<>();
         
         for (String k : keys) {
-            result.add(new Bag(k, bags));
+            result.add(new Bag(k, 0, bags));
         }
         
         //System.out.println(result);
         
         long count = result.stream().filter(b-> b.hasBag("shiny gold")).count();
         System.out.println(count);
+        
+        Bag gold = new Bag("shiny gold", 1, bags);
+        System.out.println(gold);
+         System.out.println(gold.count());
     }
     
 
    
     private static class BagsData {
         
-        private final Map<String, List<String>> bags = new HashMap<>();
+        private final Map<String, List<B2>> bags = new HashMap<>();
 
         public BagsData(List<String> strings) {
                
@@ -44,7 +48,7 @@ public class Day072 {
 
                 String key = rowStuff[0].trim();
 
-                List<String> other = getOther(rowStuff[1].trim());
+                List<B2> other = getOther(rowStuff[1].trim());
                 //System.out.println(key);
 
 
@@ -52,17 +56,17 @@ public class Day072 {
             }
         }
         
-        public List<String> get(String name) {
+        public List<B2> get(String name) {
             return bags.get(name);
         }
          
-        private List<String> getOther(String stuff) {
+        private List<B2> getOther(String stuff) {
 
             String[] xs = stuff.split(",");
 
-            List<String> result = new ArrayList<>();
+            List<B2> result = new ArrayList<>();
             for (String x : xs) {
-                String cleaned = cleanup(x);
+                B2 cleaned = cleanup(x);
                 if (!cleaned.isEmpty()) {
                     result.add(cleaned);
                 }
@@ -70,12 +74,13 @@ public class Day072 {
             return result;
         }
 
-        private String cleanup(String in) {
+        private B2 cleanup(String in) {
             if ("no other bags.".equals(in.trim())) {
-                return "";
+                return new B2("", 0);
             } else {
                 String[] xx = in.trim().split(" ");
-                return String.format("%s %s",xx[1], xx[2]);
+                int val = Integer.parseInt(xx[0]);
+                return new B2(String.format("%s %s",xx[1], xx[2]), val);
             }
         }
         
@@ -84,24 +89,52 @@ public class Day072 {
         }
     }
     
+    private static class B2 {
+        private final String name;
+        private final int amount;
+
+        public B2(String name, int amount) {
+            this.name = name;
+            this.amount = amount;
+        }
+        
+        public String name() {
+            return name;
+        }
+        
+        public int amount() {
+            return amount;
+        }
+        
+        public boolean isEmpty() {
+           return "".equals(name) && amount == 0;
+        }
+    }
+    
     private static class Bag {
         
         private final String name;
+        private final int value;
         private final List<Bag> content;
 
-        public Bag(String name, BagsData bags) {
+        public Bag(String name, int value, BagsData bags) {
             this.name = name;
+            this.value = value;
             
-            List<String> other = bags.get(name);
+            List<B2> other = bags.get(name);
             content = new ArrayList<>();
-            for (String s : other) {
-                content.add(new Bag(s, bags));
+            for (B2 s : other) {
+                content.add(new Bag(s.name(), s.amount(), bags));
             }
 
         }
         
         public List<Bag> content() {
             return content;
+        }
+        
+        public int value() {
+            return value;
         }
 
         public boolean isBag(String name) {
@@ -112,9 +145,19 @@ public class Day072 {
             return content.stream().anyMatch(b -> (b.isBag(search) || b.hasBag(search)));
         }
         
+        public long count() {
+           long total = 0;
+           
+           for (Bag b : content) {
+               total = total + b.value() + b.count();
+           }
+            
+           return value * total;
+        }
+        
         @Override
         public String toString() {
-            return name + content;
+            return name+" "+value+ " " + content;
         }
         
         
