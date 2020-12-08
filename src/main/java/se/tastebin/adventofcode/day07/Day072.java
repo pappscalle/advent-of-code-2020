@@ -13,28 +13,10 @@ public class Day072 {
 
     public static void main(String[] args) {
         List<String> strings = new ListFromFile("src/main/java/se/tastebin/adventofcode/day07/day07.txt").list();
-
-//        Map<String, List<String>> bags = new HashMap<>();
-//        
-//        for (String row : strings) {
-//            
-//            String[] rowStuff = row.split("bags contain");
-//            
-//            String key = rowStuff[0].trim();
-//            
-//            List<String> other = getOther(rowStuff[1].trim());
-//            //System.out.println(key);
-//            
-//            
-//            bags.put(key, other);
-//        }
         
-        
-        //System.out.println(bags);
-       
         BagsData bags = new BagsData(strings);
         
-        Set<String> keys = bags.keySet();
+        List<String> keys = bags.keys();
         
         List<Bag> result = new ArrayList<>();
         
@@ -70,7 +52,10 @@ public class Day072 {
             }
         }
         
-        
+        public List<String> get(String name) {
+            return bags.get(name);
+        }
+         
         private List<String> getOther(String stuff) {
 
             String[] xs = stuff.split(",");
@@ -104,7 +89,7 @@ public class Day072 {
         private final String name;
         private final List<Bag> content;
 
-        public Bag(String name, Map<String, List<String>> bags) {
+        public Bag(String name, BagsData bags) {
             this.name = name;
             
             List<String> other = bags.get(name);
