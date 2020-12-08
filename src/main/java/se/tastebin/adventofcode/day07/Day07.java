@@ -11,7 +11,7 @@ import se.tastebin.adventofcode.ListFromFile;
 public class Day07 {
 
     public static void main(String[] args) {
-        List<String> strings = new ListFromFile("src/main/java/se/tastebin/adventofcode/day07/day07-test.txt").list();
+        List<String> strings = new ListFromFile("src/main/java/se/tastebin/adventofcode/day07/day07.txt").list();
 
         Map<String, List<String>> bags = new HashMap<>();
         
@@ -19,9 +19,9 @@ public class Day07 {
             
             String[] rowStuff = row.split("bags contain");
             
-            String key = rowStuff[0];
+            String key = rowStuff[0].trim();
             
-            List<String> other = getOther(rowStuff[1]);
+            List<String> other = getOther(rowStuff[1].trim());
             //System.out.println(key);
             
             
@@ -29,14 +29,20 @@ public class Day07 {
         }
         
         
-        System.out.println(bags);
-        
+        //System.out.println(bags);
+       
         Set<String> keys = bags.keySet();
         
-        for (String key : keys) {
+        List<Bag> result = new ArrayList<>();
+        
+        for (String k : keys) {
+            result.add(new Bag(k, bags));
         }
         
+        //System.out.println(result);
         
+        long count = result.stream().filter(b-> b.hasBag("shiny gold")).count();
+        System.out.println(count);
     }
 
     
@@ -63,44 +69,45 @@ public class Day07 {
             return String.format("%s %s",xx[1], xx[2]);
         }
     }
+   
     
-    private static class Lookup {
+    
+    private static class Bag {
         
-        Map<String, List<String>> bags;
+        private final String name;
+        private final List<Bag> content;
 
-        public Lookup(Map<String, List<String>> bags) {
-            this.bags = bags;
+        public Bag(String name, Map<String, List<String>> bags) {
+            this.name = name;
+            
+            List<String> other = bags.get(name);
+            content = new ArrayList<>();
+            for (String s : other) {
+                content.add(new Bag(s, bags));
+            }
+
         }
         
-        boolean has(String value) {
-            List<String> other = bags.get(value);
-            if (other.isEmpty()) {
-                return false;
-            } else if (other.contains("shiny gold")) {
-                return true;
-            } else {
-                for (String s : other) {
-                    
-                }
-            }
-        } 
+        public String name() {
+            return name;
+        }
+        
+        public List<Bag> content() {
+            return content;
+        }
+
+        public boolean hasBag(String search) {
+            return content.stream().anyMatch(b -> (b.name().equals(search) || b.hasBag(search)));
+        }
+        
+        @Override
+        public String toString() {
+            return name + content;
+        }
+        
+        
         
     }
-    
-    
-//    private static class Bag {
-//        
-//        private final String name;
-//        private final List<String> content;
-//
-//        public Bag(String name, List<String> content) {
-//            this.name = name;
-//            this.content = content;
-//        }
-//        
-//        
-//        
-//    }
     
     
     
