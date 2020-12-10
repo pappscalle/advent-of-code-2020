@@ -10,7 +10,7 @@ import se.tastebin.adventofcode.ListFromFile;
 public class Day07 {
 
     public static void main(String[] args) {
-        List<String> strings = new ListFromFile("src/main/java/se/tastebin/adventofcode/day07/day07-test.txt").list();
+        List<String> strings = new ListFromFile("src/main/java/se/tastebin/adventofcode/day07/day07.txt").list();
         
         Rules rules = new Rules(strings);
        
@@ -19,9 +19,9 @@ public class Day07 {
         List<Bag> result = new ArrayList<>();
         
         for (String k : keys) {
-            result.add(new Bag(k, 0, rules));
+            result.add(new Bag(k, 1, rules));
         }
-        
+        System.out.println(result);
         // #1
         
         long count = result.stream().filter(b-> b.hasBag("shiny gold")).count();
@@ -157,13 +157,7 @@ public class Day07 {
         
         @Override
         public String toString() {
-            return String.format("%s %s %s", name, value, content);
+            return String.format("%s %s %s", value, name, content);
         }
-        
-        
-        
     }
-    
-    
-    
 }
